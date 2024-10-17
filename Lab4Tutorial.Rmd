@@ -145,9 +145,7 @@ Now load it:
 require(tidyverse)
 ```
 
-First we will reorganize how our data matrix is formatted.
-### Question
-Why do we do this? Think about the format your data needs to be in for further analyses
+First we will reorganize how our data matrix is formatted. \### Question Why do we do this? Think about the format your data needs to be in for further analyses
 
 ```{r}
 #Convert from wide to long data:
@@ -164,58 +162,74 @@ ggplot(fish_long, aes(fill=species, y=count, x=site)) +
 
 #ggplot has a ton of customizable features. Look up ggplot2 and change the colours, resize the axes and labels, edit the gridlines, etc.
 ```
+
 We can also compare our data with basic box plots that show the distribution of the data:
+
 ```{r}
 ggplot(fish_long, aes(x=site, y=count, fill=species)) + 
     geom_boxplot()
 
 #Again, customize your plots.
 ```
+
 ### Question
+
 What information does a boxplot provide that you can't get in a bar chart? What do the horizontal and vertical lines represent?
 
 ## Exploring environmental data
+
 Load our environmental data:
+
 ```{r}
 env <- read.csv("env_vars.csv")
 str(env)
 ```
+
 Start by plotting variables. Here's example code for temperature, but you'll want to plot each variable
+
 ```{r}
 ggplot(env, aes(y = temp, x = site)) +
     geom_bar(stat="identity")
 ```
+
 ### Question:
+
 How does this dataset differ from the fish dataset (hint: think about replication/variance in measurements)?
 
 ## Comparing sites with an ANOVA and post-hoc analysis
+
 ANOVAs are used to compare means between three or more groups (e.g. sites).
 
 When performing the ANOVA, there are some processes that need to take place before we actually run the test. We first gather and organize our data as need be. Then we must check that our data meet the assumptions of the test we are planning on carrying out, then we can perform our test and interpret.
 
-The assumptions of the one-factor ANOVA are:
-1) Observations are independent and random 2) Data in each level of the groupings are normally distributed 3) The populations have common variances
+The assumptions of the one-factor ANOVA are: 1) Observations are independent and random 2) Data in each level of the groupings are normally distributed 3) The populations have common variances
 
 Let's say we want to test whether Shannon Diversity differs between sites
 
 We first assess the assumption of normality by examining a histogram of our data. What we want to see is a nice bell curve-shaped distribution
+
 ```{r}
 #Assess normality
 shannon.hist <- hist(fish_long$shannon) #hist() plots a histogram
 #This looks pretty good, ANOVAs are pretty robust to normality assumptions
 ```
+
 Next we test for homogeneity of variances
 
-The Bartlett test tests the null hypothesis that variances are equal. Therefore, p > 0.05 indicates equal variances between groups and supports the assumption.
+The Bartlett test tests the null hypothesis that variances are equal. Therefore, p \> 0.05 indicates equal variances between groups and supports the assumption.
+
 ```{r}
 #Test for equal variances between groups
 
 bartlett.test(fish_long$shannon~fish_long$site)
 ```
+
 ### Question
+
 Here, our variances are NOT equal. What would you do next if this is the case in our lab data?
 
 For illustrative purposes I will do an ANOVA anyways. NOTE: If you have unequal variances the test assumptions are violated and an ANOVA may not be the appropriate test to run.
+
 ```{r}
 #One-way ANOVA
 
@@ -228,6 +242,7 @@ summary(shan.anova) #get your F-value and p-value
 ```
 
 The last step is to do a post-hoc analysis. If there was a difference between groups, this analysis would do pairwise comparisons to tell us which groups are different from one another
+
 ```{r}
 #Tukey-Kramer test
 TukeyHSD(shan.anova)
@@ -236,11 +251,13 @@ TukeyHSD(shan.anova)
 ```
 
 ## Make an nMDS plot
+
 nMDS, short for non-metric dimensional scaling, is a visualization technique that allows us to see information from multiple dimensions in 2D space. Ulimately, we are looking at how different communities within sites are by looking at the plotted distance between points.
 
 For this analysis, we want to use the original fish dataset - "fish" rather than "fish_long".
 
 We want to alter this dataframe to contain only the abundance data for each sample:
+
 ```{r}
 #First, let's remind ourselves what our dataframe looks like:
 head(fish)
@@ -252,12 +269,15 @@ head(taxa) #check to make sure it worked
 
 Run the nMDS using the vegan package and assess "stress". The stress value indicates how well the scaling fits the data. A lower stress value indicates a better representation.
 
-As a general rule of thumb, stress < 0.05 - 0.1 is excellent, < 0.1 - 0.2 is great, < 0.2 - 0.3 is good/ok, and stress > 0.3 provides a poor representation.
+As a general rule of thumb, stress \< 0.05 - 0.1 is excellent, \< 0.1 - 0.2 is great, \< 0.2 - 0.3 is good/ok, and stress \> 0.3 provides a poor representation.
+
 ```{r}
 taxa.mds <- metaMDS(comm = taxa, distance = "bray", k=2, trace = FALSE, autotransform = FALSE, try=20, trymax=20, engine=NULL) #Run the nMDS 
 taxa.mds$stress #Get a measurement of stress
 ```
+
 Now we plot:
+
 ```{r}
 plot(taxa.mds$points, col=c(rep("black",9), rep("red",9), rep("blue",9)), cex=1.25)
 
@@ -267,7 +287,9 @@ ordiellipse(taxa.mds, fish$site, display = "sites", kind = "se", conf = 0.95, la
 #This can gives us a figure with each taxa a different colour and elipses around the sites
 #Here, we have a bit of a scatter with no clear trends
 ```
+
 ## Running a PERMANOVA
+
 A PERMANOVA is a non-parametric version of a multivariate ANOVA. We can use a PERMANOVA to analyze statistical trends that might exist within the nMDS plot.
 
 ```{r}
@@ -278,4 +300,3 @@ taxa.perm<-adonis2(taxa~site, data = fish, permutations = 999, method = "bray", 
 taxa.perm
 #There is no significant differences in the communities between sites
 ```
-
