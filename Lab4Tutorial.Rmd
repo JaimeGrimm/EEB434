@@ -1,0 +1,133 @@
+---
+title: "MarineEcology_Tutorial"
+author: "Jaime Grimm"
+date: "2024-10-17"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Marine Ecology - Lab 4 Tutorial
+
+## Introduction
+
+R is an open source programming language that is used extensively in the field of ecology and evolution. R is a powerful tool for conducting statistical analyses and creating plots, but can come with a bit of a learning curve if you are unfamiliar with programming. This guide will provide instructions for downloading and using R, including example code that will be helpful when you do your analysis for labs 3 & 4.
+
+## Installing R and R Studio
+
+To begin, you will need to install R, as well as R studio, which is a helpful user interface for interacting with the programming language.
+
+### If you are a windows user:
+
+First, follow the instructions to download R from the [**CRAN website**](https://cran.r-project.org/bin/windows/base/) for the most recent version: R-4.4.1 Run the .exe file that was just downloaded and follow the instructions on screen to install the downloaded software locally on your computer.
+
+Go to the [**RStudio download page**](https://www.rstudio.com/products/rstudio/download/#download) and identify the free version for your operating system Under Installers select RStudio Desktop 2022.07.2+576 for your operating system Follow the on-screen instructions to download the software and install it on your local machine Once it's installed, open RStudio to make sure it works and that you don't get any error messages.
+
+### If you are a mac user:
+
+Download R from the [**Cran website**](https://cran.r-project.org/bin/macosx/) Select the .pkg file for the latest R version Double click on the downloaded file to install R
+
+Go to the [**RStudio download page**](https://www.rstudio.com/products/rstudio/download/#download) and identify the free version for your operating system Under Installers select RStudio Desktop 2022.07.2+576 for your operating system Follow the on-screen instructions to download the software and install it on your local machine Once it's installed, open RStudio to make sure it works and that you don't get any error messages.
+
+### If you are a linux user:
+
+Follow the instructions for your distribution from [**CRAN**](https://cloud.r-project.org/bin/linux/) they provide information to get the most recent version of R for common distributions. For most distributions, you could use your package manager (e.g., for Debian/Ubuntu run sudo apt-get install r-base and for Fedora yum install R, but we don't recommend this approach as the versions provided by this are usually out of date. In any case, make sure you have at least R 4.1.1.
+
+Go to the [**RStudio download page**](https://www.rstudio.com/products/rstudio/download/#download) and identify the free version for your operating system Under Installers select RStudio Desktop 2022.07.2+576 for your operating system Follow the on-screen instructions to download the software and install it on your local machine Once it's installed, open RStudio to make sure it works and that you don't get any error messages.
+
+## Getting started in R
+
+The first thing you'll want to do when you open R studio is open a new script by pressing the + button in the top left corner. You'll notice that the R studio interface has four panels. In the top left is your R script, where you will write and run code. The bottom left is the R console. You can also write and run code in this block, but it will not be saved for you to come back to in future sessions. The top right is the environment workspace that will keep track of all of the data and objects you create in your script, and the bottom right allows you to explore files, get help and view plots.
+
+Next, you need to set your working directory. This is a filepath on your computer where you will save your script. This is also where you'll need to save your datafiles to so that R knows where to look for them. You can do this by clicking "Session" \> "Set working directory" \> "Choose directory" and then navigate to the folder you will be working in. Alternatively, you can do this through code:
+
+```{r}
+#Set the working directory
+
+setwd("~/Documents/GitHub/MarineEcology_Tutorial") 
+#Note that this directory will be specific to your own computer - this is just an example.
+```
+
+## Running code
+
+To run a line of code on a windows computer, hold CTR and press ENTER. On a mac computer, hold CMD and press ENTER
+
+## Annotating code
+
+You'll notice above that I used the "\#" symbol before some lines of text. This marks the following lines as "comments" and will not run as code. It is good practice to annotate your code with comments explaining what a line of code does, or why you chose to do something. These are great notes to yourself or others that visit your code in the future.
+
+## Opening excel files in R
+
+Next, we'll want to load our lab data into R as a dataframe (which is structurally similar to looking at your data in a spreadsheet). The first thing we need to do is make sure our data is in a format that R can read. Specifically, we want to remove any spaces or special characters and save our datasheet as a .csv (comma-delimited excel sheet) in the folder we plan to set as our working directory.
+
+Now, we can load the data into R.
+
+We'll start by creating what R calls an object to refer to our data. Here, I'm calling my mock dataset "fish". This dataset contains count data for three species of fish at three sites.
+
+```{r}
+fish <- read.csv("fish.csv")
+#The arrow tells R that "fish" is an object that refers to our data
+#Having trouble? Make sure you are working in the correct directory where you have saved your data file
+```
+
+We can explore our data. Try the following commands and see what it shows you about our dataset.
+
+```{r}
+head(fish)
+str(fish)
+View(fish)
+```
+
+## Get summary statistics
+
+We can also explore the summary statistics of our data:
+
+```{r}
+summary(fish)
+```
+
+## Analyzing differences in biodiversity between sites
+
+In our lab, we're interested in exploring biodiversity differences between sampling sites. One common measure of biodiversity is the Shannon diversity index, which takes into account both species richness (number of species) and evenness (relative abundance of those species). Here, we will consider each of our sample replicates as a community.
+
+The equation for the Shannon index ($H$) is: $H$ = $-\sum p_{i} * ln(p_{i})$
+
+Where $p_i$ is the proportion of the entire community made up of species $i$
+
+We could calculate Shannon diversity manually for each of our sites, or we can use a package\* in R called vegan. You can find documentation about the vegan package here: <https://cran.r-project.org/web/packages/vegan/vignettes/diversity-vegan.pdf>
+
+\*Packages are sets of code that other people create for a given function and "package" for others to use.
+
+To use a package, we first need to install it:
+
+```{r}
+install.packages("vegan")
+```
+
+We then load our installed packages to be able to use them:
+
+```{r}
+require(vegan)
+```
+
+## Calculating Shannon diversity using the vegan package
+
+We are now ready to calculate the Shannon diversity index for our sites. We use the diversity() function in vegan to accomplish this. Each function comes with a set of arguments that are required for it to function. For diversity() we need to provide: x - our data that we want to use to calculate the shannon index index - which index we want to calculate (here "shannon")
+
+```{r}
+fish$shannon <- diversity(x = fish[,3:5], index = "shannon")
+#This line of code is doing a couple of things. First, by defining the object "fish$shannon" we are creating a new column in our dataframe with the title "shannon" where our Shannon index results will be stored.
+#Next, by adding the square brackets after "fish" we are specifying to the function that it should calculate the index using columns 3-5 in our dataframe, which correspond to the fish counts for each species
+
+#Take a look at how this has changed our dataframe
+head(fish)
+```
+
+#### Question
+
+We have now calculated a shannon index value for every replicate at every sample site. Why did we do this rather than first collapsing (e.g. by taking the mean) of each fish species at each site to only have one index value per site?
+
+## Making plots
+There are two plotting libraries we'll be using to make plots: The first is base plot, already included as a part of R. The second is ggplot2 - a package we can install. We will also install tidyverse - a package for tidying data
