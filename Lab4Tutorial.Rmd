@@ -77,7 +77,6 @@ We can explore our data. Try the following commands and see what it shows you ab
 ```{r}
 head(fish)
 str(fish)
-View(fish)
 ```
 
 ## Get summary statistics
@@ -100,10 +99,10 @@ We could calculate Shannon diversity manually for each of our sites, or we can u
 
 \*Packages are sets of code that other people create for a given function and "package" for others to use.
 
-To use a package, we first need to install it:
+To use a package, we first need to install it (remove the # to run this line of code if you don't already have this package installed):
 
 ```{r}
-install.packages("vegan")
+#install.packages("vegan")
 ```
 
 We then load our installed packages to be able to use them:
@@ -136,7 +135,7 @@ There are two plotting libraries we'll be using to make plots: The first is base
 If you've never used these packages before you'll start by installing tidyverse:
 
 ```{r}
-install.packages("tidyverse")
+#install.packages("tidyverse")
 ```
 
 Now load it:
@@ -280,7 +279,6 @@ Now we plot:
 
 ```{r}
 plot(taxa.mds$points, col=c(rep("black",9), rep("red",9), rep("blue",9)), cex=1.25)
-
 orditorp(taxa.mds,display="species",col="black",air=0.01, conf=0.95)
 ordiellipse(taxa.mds, fish$site, display = "sites", kind = "se", conf = 0.95, label = T)
 
