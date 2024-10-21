@@ -48,8 +48,8 @@ Next, you need to set your working directory. This is a filepath on your compute
 ```{r}
 #Set the working directory
 
-setwd("~/Documents/GitHub/MarineEcology_Tutorial") 
-#Note that this directory will be specific to your own computer - this is just an example.
+#setwd("~/Documents/GitHub/MarineEcology_Tutorial") 
+#Note that this directory will be specific to your own computer - this is just an example.You will need to change this and remove the #.
 ```
 
 ### 2.1 Running code
@@ -232,21 +232,6 @@ ggplot(env, aes(y = temp, x = site)) +
 #### Question:
 
 How does this dataset differ from the fish dataset (hint: think about replication/variance in measurements)?
-
-### 5.1 Calculating summary statistics for environmental variables
-
-If we are interested in generating some summary statistics (including mean and standard deviation), there are a couple of ways we can do that in R:
-
-```{r}
-#First, we could simply call the summary() function for the variable we are interested in. This function gives us the minimum, maximum, mean, median and quantile values of our data:
-summary(env$temp)
-
-#Alternatively, we could caluculate the mean using the mean() function:
-mean(env$temp)
-
-#If we're interested in the standard deviation, we can calculate that using the sd() function:
-sd(env$temp)
-```
 
 ## 6 Comparing sites with an ANOVA and post-hoc analysis
 
