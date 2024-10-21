@@ -11,33 +11,35 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Marine Ecology - Lab 4 Tutorial
 
-## Introduction
+## 1.1 Introduction
 
-R is an open source programming language that is used extensively in the field of ecology and evolution. R is a powerful tool for conducting statistical analyses and creating plots, but can come with a bit of a learning curve if you are unfamiliar with programming. This guide will provide instructions for downloading and using R, including example code that will be helpful when you do your analysis for labs 3 & 4.
+R is an open source programming language that is used extensively in the field of ecology and evolution. R is a powerful tool for conducting statistical analyses and creating plots, but can come with a bit of a learning curve if you are unfamiliar with programming. This guide will provide instructions for downloading and using R, including example code that will be helpful when you do your analysis for labs 4 & 5.
 
-## Installing R and R Studio
+Note: there are questions throughout this tutorial that aim to aid in your understanding. These questions do not need to be addressed in your submitted lab report.
+
+## 1.2 Installing R and R Studio
 
 To begin, you will need to install R, as well as R studio, which is a helpful user interface for interacting with the programming language.
 
-### If you are a windows user:
+### 1.2.1 If you are a windows user:
 
 First, follow the instructions to download R from the [**CRAN website**](https://cran.r-project.org/bin/windows/base/) for the most recent version: R-4.4.1 Run the .exe file that was just downloaded and follow the instructions on screen to install the downloaded software locally on your computer.
 
 Go to the [**RStudio download page**](https://www.rstudio.com/products/rstudio/download/#download) and identify the free version for your operating system Under Installers select RStudio Desktop 2022.07.2+576 for your operating system Follow the on-screen instructions to download the software and install it on your local machine Once it's installed, open RStudio to make sure it works and that you don't get any error messages.
 
-### If you are a mac user:
+### 1.2.2 If you are a mac user:
 
 Download R from the [**Cran website**](https://cran.r-project.org/bin/macosx/) Select the .pkg file for the latest R version Double click on the downloaded file to install R
 
 Go to the [**RStudio download page**](https://www.rstudio.com/products/rstudio/download/#download) and identify the free version for your operating system Under Installers select RStudio Desktop 2022.07.2+576 for your operating system Follow the on-screen instructions to download the software and install it on your local machine Once it's installed, open RStudio to make sure it works and that you don't get any error messages.
 
-### If you are a linux user:
+### 1.2.3 If you are a linux user:
 
 Follow the instructions for your distribution from [**CRAN**](https://cloud.r-project.org/bin/linux/) they provide information to get the most recent version of R for common distributions. For most distributions, you could use your package manager (e.g., for Debian/Ubuntu run sudo apt-get install r-base and for Fedora yum install R, but we don't recommend this approach as the versions provided by this are usually out of date. In any case, make sure you have at least R 4.1.1.
 
 Go to the [**RStudio download page**](https://www.rstudio.com/products/rstudio/download/#download) and identify the free version for your operating system Under Installers select RStudio Desktop 2022.07.2+576 for your operating system Follow the on-screen instructions to download the software and install it on your local machine Once it's installed, open RStudio to make sure it works and that you don't get any error messages.
 
-## Getting started in R
+## 2 Getting started in R
 
 The first thing you'll want to do when you open R studio is open a new script by pressing the + button in the top left corner. You'll notice that the R studio interface has four panels. In the top left is your R script, where you will write and run code. The bottom left is the R console. You can also write and run code in this block, but it will not be saved for you to come back to in future sessions. The top right is the environment workspace that will keep track of all of the data and objects you create in your script, and the bottom right allows you to explore files, get help and view plots.
 
@@ -50,15 +52,15 @@ setwd("~/Documents/GitHub/MarineEcology_Tutorial")
 #Note that this directory will be specific to your own computer - this is just an example.
 ```
 
-## Running code
+### 2.1 Running code
 
 To run a line of code on a windows computer, hold CTR and press ENTER. On a mac computer, hold CMD and press ENTER
 
-## Annotating code
+### 2.2 Annotating code
 
 You'll notice above that I used the "\#" symbol before some lines of text. This marks the following lines as "comments" and will not run as code. It is good practice to annotate your code with comments explaining what a line of code does, or why you chose to do something. These are great notes to yourself or others that visit your code in the future.
 
-## Opening excel files in R
+### 2.3 Opening excel files in R
 
 Next, we'll want to load our lab data into R as a dataframe (which is structurally similar to looking at your data in a spreadsheet). The first thing we need to do is make sure our data is in a format that R can read. Specifically, we want to remove any spaces or special characters and save our datasheet as a .csv (comma-delimited excel sheet) in the folder we plan to set as our working directory.
 
@@ -79,27 +81,42 @@ head(fish)
 str(fish)
 ```
 
-## Get summary statistics
+### 2.4 Get summary statistics
 
-We can also explore the summary statistics of our data:
+We can also explore the overall summary statistics of our data:
 
 ```{r}
 summary(fish)
 ```
 
-## Analyzing differences in biodiversity between sites
+## 3 Analyzing differences in biodiversity among sites
 
-In our lab, we're interested in exploring biodiversity differences between sampling sites. One common measure of biodiversity is the Shannon diversity index, which takes into account both species richness (number of species) and evenness (relative abundance of those species). Here, we will consider each of our sample replicates as a community.
+In our lab, we're interested in exploring biodiversity differences among sampling sites.
 
-The equation for the Shannon index ($H$) is: $H$ = $-\sum p_{i} * ln(p_{i})$
+### 3.1 Calculating species abundance in each sample
 
-Where $p_i$ is the proportion of the entire community made up of species $i$
+We can start by calculating the total abundance of plankton across all species in each of our samples. In our dataframe, each row represents one sample, so we can calculate abundance by summing across the species counts per row, specifying the rows our species counts are in.
 
-We could calculate Shannon diversity manually for each of our sites, or we can use a package\* in R called vegan. You can find documentation about the vegan package here: <https://cran.r-project.org/web/packages/vegan/vignettes/diversity-vegan.pdf>
+To do this calculation, we'll use the rowSums() function in R. Each function comes with a set of arguments that are required for it to function. For rowSums() we need to provide: **x** - our data
+
+```{r}
+fish$abundance <- rowSums(x = fish[3:5])
+#This line of code is doing a couple of things. First, by defining the object "fish$abundance" we are creating a new column in our dataframe with the title "abundance" 
+#Next, by adding the square brackets after "fish" we are specifying to the function that it should calculate the sum using columns 3-5 in our dataframe, which correspond to the fish counts for each species
+
+#Take a look at how this changes our dataframe:
+head(fish)
+```
+
+### 3.2 Calculating species richness in each sample
+
+Richness is the number of species present in each site. In the mock dataset I'm using here, we only measured three species so it's trivial to look at the data and count the number of species. But what if our dataset were more complex/had more species?
+
+We could calculate ricness "manually" for each of our sites, or we can use a package\* in R called vegan. You can find documentation about the vegan package here: <https://cran.r-project.org/web/packages/vegan/vignettes/diversity-vegan.pdf>
 
 \*Packages are sets of code that other people create for a given function and "package" for others to use.
 
-To use a package, we first need to install it (remove the # to run this line of code if you don't already have this package installed):
+To use a package, we first need to install it (remove the \# to run this line of code if you don't already have this package installed):
 
 ```{r}
 #install.packages("vegan")
@@ -108,18 +125,29 @@ To use a package, we first need to install it (remove the # to run this line of 
 We then load our installed packages to be able to use them:
 
 ```{r}
-require(vegan)
+library(vegan)
 ```
 
-## Calculating Shannon diversity using the vegan package
+We can now use the specnumber() function in vegan to calculate richness. For specnumber() we need to provide: **x** - our data
+```{r}
+fish$richness <- specnumber(fish[,3:5])
+#Again, I am creating a new column in our dataframe titled "richness" and specifying which columns (specified using the square brackets) the function should use to calculate the richness
+#Take a look at how this has changed our dataframe
+```
 
-We are now ready to calculate the Shannon diversity index for our sites. We use the diversity() function in vegan to accomplish this. Each function comes with a set of arguments that are required for it to function. For diversity() we need to provide: x - our data that we want to use to calculate the shannon index index - which index we want to calculate (here "shannon")
+### 3.3 Calculating the Shannon Diversity Index for each sample
+
+One common measure of biodiversity is the Shannon diversity index, which takes into account both species richness (number of species) and evenness (relative abundance of those species). Here, we will consider each of our sample replicates as a community.
+
+The equation for the Shannon index ($H$) is: $H$ = $-\sum p_{i} * ln(p_{i})$
+
+Where $p_i$ is the proportion of the entire community made up of species $i$
+
+We could calculate the Shannon index "manually" for each of our sites, or we can use the diversity() function in vegan. For diversity() we need to provide: **x** - our data that we want to use to calculate the shannon index, **index** - which index we want to calculate (here, "shannon")
 
 ```{r}
 fish$shannon <- diversity(x = fish[,3:5], index = "shannon")
-#This line of code is doing a couple of things. First, by defining the object "fish$shannon" we are creating a new column in our dataframe with the title "shannon" where our Shannon index results will be stored.
-#Next, by adding the square brackets after "fish" we are specifying to the function that it should calculate the index using columns 3-5 in our dataframe, which correspond to the fish counts for each species
-
+#Again, I am creating a new column in our dataframe titled "shannan" and specifying which columns (specified using the square brackets) the function should use to calculate the shannon index
 #Take a look at how this has changed our dataframe
 head(fish)
 ```
@@ -128,7 +156,7 @@ head(fish)
 
 We have now calculated a shannon index value for every replicate at every sample site. Why did we do this rather than first collapsing (e.g. by taking the mean) of each fish species at each site to only have one index value per site?
 
-## Making plots
+## 4 Making plots
 
 There are two plotting libraries we'll be using to make plots: The first is base plot, already included as a part of R. The second is ggplot2 -which is part of a larger set of packages in the "tidyverse"
 
@@ -141,23 +169,31 @@ If you've never used these packages before you'll start by installing tidyverse:
 Now load it:
 
 ```{r}
-require(tidyverse)
+library(tidyverse)
 ```
 
-First we will reorganize how our data matrix is formatted. \### Question Why do we do this? Think about the format your data needs to be in for further analyses
+First we will reorganize how our dataframe is organized by switching it from a *wide* format to a *long* format. Typically, wide formats are useful for data analysis, but long formats can be helpful for creating some types of plots. You can visualize and read about the differences in wide versus long data formats here: <https://www.statology.org/long-vs-wide-data/>. In this case, rather than have each individual species in our dataframe in it's own column, we're going to create a new column called "species" which will list the species, and one called "count" which will contain the number of each species in each site and replicate.
+
+We are going to use the function pivot_longer() [see details here](https://tidyr.tidyverse.org/reference/pivot_longer.html), which requires the following arguments: **data** - our data, **cols** - the columns we want to pivot into longer format (we provide these as a vector using the c() function), **names_to** - the name of the column we want to put our previous column names into, and **values_to** - the name of the column we want to put our values into
 
 ```{r}
 #Convert from wide to long data:
-fish_long <- gather(data = fish, key = species, value = count, bass, pumpkinseed, sucker, factor_key=TRUE)
+fish_long <- pivot_longer(data=fish, cols=c("bass", "pumpkinseed", "sucker"), names_to="species", values_to="count")
 
-#Compare how this matrix looks compared to the previous dataframe
+#Compare how fish_long looks compared to the previous dataframe (fish)
 ```
 
-Now we will make a stacked bar chart to explore the communities at each site
+#### Question
+
+What happens to our columns where we calculated abundance and the shannon index in our long dataframe? Does converting the format of our dataframe mess up these calculations?
+
+Now we will make a stacked bar chart to explore the communities at each site. The syntax of ggplot can be confusing and take some getting used to. There are tons of resources available online to help you figure it out!
 
 ```{r}
 ggplot(fish_long, aes(fill=species, y=count, x=site)) + 
     geom_bar(position="stack", stat="identity")
+
+#Here I am telling ggplot() we want to plot data from our fish_long dataframe, using site as our x axis, count as our y values, and "filling" the colours based on each species. geom_bar() tells ggplot to make it a bar chart.
 
 #ggplot has a ton of customizable features. Look up ggplot2 and change the colours, resize the axes and labels, edit the gridlines, etc.
 ```
@@ -165,9 +201,11 @@ ggplot(fish_long, aes(fill=species, y=count, x=site)) +
 We can also compare our data with basic box plots that show the distribution of the data:
 
 ```{r}
+dev.off() #sometimes plotting in R acts up. We use this line of code to "clear" previous plotting instructions
 ggplot(fish_long, aes(x=site, y=count, fill=species)) + 
     geom_boxplot()
 
+#Here, I am using geom_boxplot() instead to change the type of plot we're making
 #Again, customize your plots.
 ```
 
@@ -175,7 +213,7 @@ ggplot(fish_long, aes(x=site, y=count, fill=species)) +
 
 What information does a boxplot provide that you can't get in a bar chart? What do the horizontal and vertical lines represent?
 
-## Exploring environmental data
+## 5 Exploring environmental data
 
 Load our environmental data:
 
@@ -191,65 +229,90 @@ ggplot(env, aes(y = temp, x = site)) +
     geom_bar(stat="identity")
 ```
 
-### Question:
+#### Question:
 
 How does this dataset differ from the fish dataset (hint: think about replication/variance in measurements)?
 
-## Comparing sites with an ANOVA and post-hoc analysis
+### 5.1 Calculating summary statistics for environmental variables
 
-ANOVAs are used to compare means between three or more groups (e.g. sites).
-
-When performing the ANOVA, there are some processes that need to take place before we actually run the test. We first gather and organize our data as need be. Then we must check that our data meet the assumptions of the test we are planning on carrying out, then we can perform our test and interpret.
-
-The assumptions of the one-factor ANOVA are: 1) Observations are independent and random 2) Data in each level of the groupings are normally distributed 3) The populations have common variances
-
-Let's say we want to test whether Shannon Diversity differs between sites
-
-We first assess the assumption of normality by examining a histogram of our data. What we want to see is a nice bell curve-shaped distribution
+If we are interested in generating some summary statistics (including mean and standard deviation), there are a couple of ways we can do that in R:
 
 ```{r}
-#Assess normality
-shannon.hist <- hist(fish_long$shannon) #hist() plots a histogram
-#This looks pretty good, ANOVAs are pretty robust to normality assumptions
+#First, we could simply call the summary() function for the variable we are interested in. This function gives us the minimum, maximum, mean, median and quantile values of our data:
+summary(env$temp)
+
+#Alternatively, we could caluculate the mean using the mean() function:
+mean(env$temp)
+
+#If we're interested in the standard deviation, we can calculate that using the sd() function:
+sd(env$temp)
 ```
 
-Next we test for homogeneity of variances
+## 6 Comparing sites with an ANOVA and post-hoc analysis
 
-The Bartlett test tests the null hypothesis that variances are equal. Therefore, p \> 0.05 indicates equal variances between groups and supports the assumption.
+ANOVAs are used to compare means among three or more groups (e.g. sites).
 
-```{r}
-#Test for equal variances between groups
+When performing the ANOVA, we must check that our data meet the assumptions of the test we are planning on carrying out.
 
-bartlett.test(fish_long$shannon~fish_long$site)
-```
+The assumptions of the one-factor ANOVA are: 1) Observations are independent and random 2) Residuals are normally distributed 3) Variance of the residuals is constant (homoscedasticity).
 
-### Question
+### 6.1 Implementing an ANOVA in R
+To illustrate, let's say we want to test whether species abundance differs among sites.
 
-Here, our variances are NOT equal. What would you do next if this is the case in our lab data?
-
-For illustrative purposes I will do an ANOVA anyways. NOTE: If you have unequal variances the test assumptions are violated and an ANOVA may not be the appropriate test to run.
+We start by using the aov() function to create an object:
 
 ```{r}
 #One-way ANOVA
+abundance.anova <- aov(fish$abundance~fish$site) #use the aov function to execute the ANOVA
 
-shan.anova <- aov(fish_long$shannon~fish_long$site) #use the aov function to execute the ANOVA
-
-shan.anova #See the sum of squares and degrees freedom
-summary(shan.anova) #get your F-value and p-value
-
-#Here, our p-value is 0.971, so there is no significant difference between groups
+summary(abundance.anova) #check the degrees of freedom and p-value
 ```
+Here, we don't have a significant result. 
 
-The last step is to do a post-hoc analysis. If there was a difference between groups, this analysis would do pairwise comparisons to tell us which groups are different from one another
+### 6.2 Verifying test assumptions
+Does our data meet the assumptions of the ANOVA? For assumption 1) independence of samples - this is determined by our sampling method. Were our samples taken independently? What correlations might exist?
+
+We can verify the other two assumptions using diagnostic plots of the residuals:
+```{r}
+plot(abundance.anova)
+```
+### 6.3 Interpreting residual plots
+On the first plot (residuals versus fitted), you want to check for assumption 3 - residuals are constant. Here, we're looking for a more-or-less uniform band across sites. There shouldn't be a clear pattern in how clustered the points are. This plot looks pretty good.
+
+On the second plot (Normal Q-Q), you want to check for assumption 2 - that residuals follow a normal distribution. Here, we want most of the points to fall on the diagonal line. Again, this looks pretty good. You can also plot a histogram of the residuals to double check that this looks like a normal distribution:
 
 ```{r}
-#Tukey-Kramer test
-TukeyHSD(shan.anova)
+hist(abundance.anova$residuals)
+#looks decent
+```
+### 6.4 What do you do if your data don't meet the assumptions of an ANOVA?
+Let's say the assumptions of our ANOVA are violated. One option is to transform your data and try running the test again. Here, I will show you how to do a log(x+1) transformation.
 
-#Take a look at the results - what does this tell you about difference between each site?
+#### Question
+Why do we do log(x+1) rather than log(x)? (Hint: what would happen if we have zeros in our data?)
+```{r}
+#First we transform our data
+fish$logabund <- log(fish$abundance+1) #here, I'm creating a new column in our dataframe where I've calculated the log(abundance+1)
+
+#Now, create a new ANOVA object
+logabund.anova <- aov(fish$logabund~fish$site)
+summary(logabund.anova)
+
+#Next, you could go through the process of checking your assumptions again using this new ANOVA object.
 ```
 
-## Make an nMDS plot
+### 6.5 Post-hoc analysis
+An ANOVA tells us if there are differences among groups, but doesn't give us information on which groups are different from one another. So, to understand the pairwise differences between each site, the last step is to do a post-hoc analysis. If there was a difference among groups, this analysis would do pairwise comparisons to tell us which groups are different from one another
+```{r}
+#Tukey Honestly Significant Difference test
+TukeyHSD(abundance.anova)
+
+#Take a look at the results - what does this tell you about pairwise differences between sites?
+```
+## 7 Multivariate analysis
+Multivariate analyses look for associations between multiple variables.
+
+### 7.1 Preparing data for nMDS
 
 nMDS, short for non-metric dimensional scaling, is a visualization technique that allows us to see information from multiple dimensions in 2D space. Ulimately, we are looking at how different communities within sites are by looking at the plotted distance between points.
 
@@ -266,6 +329,7 @@ taxa <- fish[3:5] #this code says to pull out columns 3 to 5 from the fish dataf
 head(taxa) #check to make sure it worked
 ```
 
+### 7.2 Stress testing nMDS
 Run the nMDS using the vegan package and assess "stress". The stress value indicates how well the scaling fits the data. A lower stress value indicates a better representation.
 
 As a general rule of thumb, stress \< 0.05 - 0.1 is excellent, \< 0.1 - 0.2 is great, \< 0.2 - 0.3 is good/ok, and stress \> 0.3 provides a poor representation.
@@ -275,6 +339,7 @@ taxa.mds <- metaMDS(comm = taxa, distance = "bray", k=2, trace = FALSE, autotran
 taxa.mds$stress #Get a measurement of stress
 ```
 
+### 7.3 Plotting the nMDS
 Now we plot:
 
 ```{r}
@@ -286,7 +351,7 @@ ordiellipse(taxa.mds, fish$site, display = "sites", kind = "se", conf = 0.95, la
 #Here, we have a bit of a scatter with no clear trends
 ```
 
-## Running a PERMANOVA
+### 7.4 Running a PERMANOVA
 
 A PERMANOVA is a non-parametric version of a multivariate ANOVA. We can use a PERMANOVA to analyze statistical trends that might exist within the nMDS plot.
 
@@ -296,5 +361,5 @@ taxa.dist<-vegdist(taxa, method = 'bray') #create a dissimilarity matrix for all
 taxa.perm<-adonis2(taxa~site, data = fish, permutations = 999, method = "bray", by="terms")
 
 taxa.perm
-#There is no significant differences in the communities between sites
+#There is no significant differences in the communities among sites
 ```
