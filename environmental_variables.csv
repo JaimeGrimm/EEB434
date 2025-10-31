@@ -1,0 +1,4 @@
+,secchi_depth_m,sampling_depth_m,water_temp_c,conductivity,weather,water_colour,wave_conditions,Lat_N,Long_W,notes
+Pier,"disappeared at 3.2 m, reappeared at 2.8 m, average 3m",5,18.1,289.5,"colder, windy, sw wind, sunny",teal,slight chop and boat traffic,"43° 38' 23""","79° 22' 57""",nets touched bottom just before 5 m
+Harbour,"disappeared at 4 m, reappeared at 4 m, average 4 m",5,18.4,291,,teal,slight chop,missing data,missing data,
+Islands,was still visible below 5 m and hit bottom,5,18.5,266.2,"cold, no wind, sunny",slightly greener,"calm, light ripples","43° 62' 61""","79° 36' 56""",too shallow for secchi
